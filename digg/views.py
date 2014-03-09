@@ -10,10 +10,6 @@ def digg(request):
     result1 = Analyse_Url('0')
     result1.start()
 
-    result1.join()
-
-    return HttpResponse("OK")
-'''
     result2 = Analyse_Url('20')
     result2.start()
 
@@ -29,18 +25,15 @@ def digg(request):
     result6 = Analyse_Url('100')
     result6.start()
 
-
-
-
     result1.join()
     result2.join()
     result3.join()
     result4.join()
     result5.join()
     result6.join()
-'''
 
 
+    return HttpResponse("OK")
 
 '''
     result = Analyse_Url(chr(2))

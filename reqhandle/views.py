@@ -79,7 +79,7 @@ def comment(request):
     b.score = arg['score']
     b.save()
 
-    return HttpResponse("OK")
+    return HttpResponse("ok")
 
 
 def default(obj):
@@ -105,9 +105,9 @@ def getcomment(request):
     result = b.comment_set.all()
 
     tmp = []
-    obj = dict()
 
-    for i in range(0, len(result)-1):
+    for i in range(0, len(result)):
+        obj = dict()
         obj['title'] = result[i].title
         obj['content'] = result[i].content
         obj['userid'] = result[i].user.userid
