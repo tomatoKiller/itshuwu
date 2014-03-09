@@ -12,18 +12,8 @@ from digg.models import Book
 def index(request):
     return render(request, 'reqhandle/index.html')
 
-
-def search(request):
-
-
-
-    bookname = request.POST['bookname']
-
-    print bookname
-    #return HttpResponse("data")
-
-
-    result = Book.objects.filter(title__contains=bookname)
+def recommend(request):
+    result = Book.objects.filter(id__lt=11)
 
     tmp = []
 
@@ -34,7 +24,33 @@ def search(request):
 
     data['books'] = tmp
 
-    print json.dumps(data, ensure_ascii=False)
+    #print json.dumps(data, ensure_ascii=False)
+
+    return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+
+def search(request):
+
+    bookname = request.POST['bookname']
+
+    print bookname
+    #return HttpResponse("data")
+    #bookname = bookname.decode('utf8')
+
+    result = Book.objects.filter(title__contains=bookname)
+
+    tmp = []
+
+    print len(result)
+
+    for i in range(0, len(result)):
+        tmp.append(model_to_dict(result[i]))
+
+    data = dict()
+
+    data['books'] = tmp
+
+   # print json.dumps(data, ensure_ascii=False)
 
     return HttpResponse(json.dumps(data, ensure_ascii=False))
 
@@ -66,18 +82,37 @@ def comment(request):
     return HttpResponse("OK")
 
 
+def default(obj):
+    """Default JSON serializer."""
+    import calendar, datetime
+
+    if isinstance(obj, datetime.datetime):
+        if obj.utcoffset() is not None:
+            obj = obj - obj.utcoffset()
+    millis = int(
+        calendar.timegm(obj.timetuple()) * 1000 +
+        obj.microsecond / 1000
+    )
+    return millis
+
+
 def getcomment(request):
 
     arg = request.POST['isbn']
-
+    print arg
     b = Book.objects.get(isbn=arg)
 
     result = b.comment_set.all()
 
     tmp = []
+    obj = dict()
 
     for i in range(0, len(result)-1):
-        tmp.append(model_to_dict(result[i]))
+        obj['title'] = result[i].title
+        obj['content'] = result[i].content
+        obj['userid'] = result[i].user.userid
+        obj['com_time'] = str(result[i].com_time)
+        tmp.append(obj)
 
     data = dict()
 
